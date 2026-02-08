@@ -3,6 +3,7 @@ import dash_bootstrap_components as dbc
 from server import app
 import triangle
 import init_database
+import api
 
 input_form = dbc.Table(
     [
@@ -87,6 +88,7 @@ def calculate_triangle(n_clicks, x1, y1, x2, y2, x3, y3):
         x1 = x1, y1 = y1,
         x2 = x2, y2 = y2,
         x3 = x3, y3 = y3,
+        by = "web"
     )
     
     with init_database.get_session() as session:

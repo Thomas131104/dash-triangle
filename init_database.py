@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 import os
 from datetime import datetime
-from sqlalchemy import create_engine, DateTime, Float, Integer
+from sqlalchemy import create_engine, DateTime, Float, Integer, String
 from sqlalchemy.orm import DeclarativeBase, sessionmaker, mapped_column, Mapped
 
 load_dotenv()
@@ -27,6 +27,7 @@ class TriangleDomain(Base):
     y2 : Mapped[float] = mapped_column(Float, comment = "Tọa độ y của đỉnh 2")
     x3 : Mapped[float] = mapped_column(Float, comment = "Tọa độ x của đỉnh 3")
     y3 : Mapped[float] = mapped_column(Float, comment = "Tọa độ y của đỉnh 3")
+    by : Mapped[str] = mapped_column(String, comment = "Thực hiện trên web / Gọi api")
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
 
