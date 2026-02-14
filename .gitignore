@@ -214,3 +214,68 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+
+
+
+# =========================
+# Node.js
+# =========================
+
+# Dependency directory
+node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Build output
+dist/
+build/
+out/
+.next/
+.nuxt/
+.svelte-kit/
+
+# Cache
+.cache/
+.parcel-cache/
+.eslintcache
+
+# Coverage
+coverage/
+
+# Temporary files
+tmp/
+temp/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# TypeScript
+*.tsbuildinfo
+
+# Optional: lock files (chỉ bỏ nếu bạn thực sự muốn)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
