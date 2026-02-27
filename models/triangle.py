@@ -1,6 +1,6 @@
 import math
 import numpy as np
-from __hidden.__safe import _safe_acos
+from __hidden.__safe import _safe_acos, _safe_eq
 
 class Point:
     def __init__(self, x, y):
@@ -33,23 +33,34 @@ class Triangle:
             a + c > b and
             b + c > a
         )
+    
+    def edge_type(self):
 
-    def triangle_type(self):
         if not self.is_exist():
             return None
 
         a, b, c = self.a, self.b, self.c
-        sides = sorted([a, b, c])
 
-        if a == b == c:
+        if _safe_eq(a,b) and _safe_eq(b,c):
             return "Tam giác đều"
-        if a == b or b == c or a == c:
+        elif _safe_eq(a,b) or _safe_eq(a,c) or _safe_eq(b,c):
             return "Tam giác cân"
-        if sides[0]**2 + sides[1]**2 == sides[2]**2:
-            return "Tam giác vuông"
-        if sides[0]**2 + sides[1]**2 < sides[2]**2:
+        else:
+            return "Tam giác thường"
+
+    def angle_type(self):
+
+        if not self.is_exist():
+            return None
+
+        biggest_angle = math.degrees(max(self.angles().values()))
+
+        if biggest_angle > 90 and not _safe_eq(biggest_angle,90):
             return "Tam giác tù"
-        return "Tam giác nhọn"
+        elif _safe_eq(biggest_angle,90):
+            return "Tam giác vuông"
+        else:
+            return "Tam giác nhọn"
 
     def perimeter(self):
         return self.a + self.b + self.c if self.is_exist() else None

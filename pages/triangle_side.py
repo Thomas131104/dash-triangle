@@ -1,4 +1,5 @@
 from dash import dcc, html, Input, Output, callback, register_page
+import dash_bootstrap_components as dbc
 from pages.triangle_solver.ccc import layout as layout1
 from pages.triangle_solver.cgc import layout as layout2
 from pages.triangle_solver.gcg import layout as layout3
@@ -10,24 +11,27 @@ register_page(__name__, path="/calc/side")
 
 
 ## Layout toàn phần
-layout = html.Div([
-    dcc.Dropdown(
+layout = dbc.Container([
+
+    dbc.Tabs(
         id="mode",
-        options=[
-            {"label": "Cạnh - Cạnh - Cạnh", "value": "ccc"},
-            {"label": "Cạnh - Góc - Cạnh", "value": "cgc"},
-            {"label": "Góc - Cạnh - Góc", "value": "gcg"},
+        active_tab="ccc",
+        className="mb-4",
+        children=[
+            dbc.Tab(label="Cạnh - Cạnh - Cạnh", tab_id="ccc"),
+            dbc.Tab(label="Cạnh - Góc - Cạnh", tab_id="cgc"),
+            dbc.Tab(label="Góc - Cạnh - Góc", tab_id="gcg"),
         ],
-        value="ccc",
-        clearable=False
     ),
 
-    html.Div(id="input-area"),
-])
+    html.Div(id="input-area")
+
+], fluid=True)
+
 
 @callback(
     Output("input-area", "children"),
-    Input("mode", "value")
+    Input("mode", "active_tab")
 )
 def render_inputs(mode):
     if mode == "ccc":
@@ -36,6 +40,4 @@ def render_inputs(mode):
         return layout2
     elif mode == "gcg":
         return layout3
-    else:
-        return layout1
-
+    return layout1

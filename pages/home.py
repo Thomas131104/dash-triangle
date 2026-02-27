@@ -4,69 +4,76 @@ import dash_bootstrap_components as dbc
 
 dash.register_page(__name__, path="/")
 
-layout = html.Div([
+# ===== COMPONENT TÁI SỬ DỤNG =====
+def make_feature_card(icon, title, desc, link, color):
+    return dbc.Card(
+        dbc.CardBody([
+            html.Div(icon, className="feature-icon"),
+            html.H5(title, className="mt-3"),
+            html.P(desc, className="text-muted"),
+            dcc.Link(
+                dbc.Button("Truy cập", color=color, className="w-100"),
+                href=link
+            )
+        ]),
+        className="feature-card h-100 text-center"
+    )
 
-    # ===== HEADER =====
-    html.Div([
-        html.H1("Chương trình phân tích tam giác"),
-        html.P("Ứng dụng tính toán, trực quan hóa và lưu trữ dữ liệu hình học")
-    ], className="mb-4"),
 
-    # ===== SUMMARY SECTION (4 phần) =====
-    dbc.Row([
-
-        # 1️⃣ Giới thiệu
-        dbc.Col(
-            dbc.Card([
-                dbc.CardBody([
-                    html.H4("📘 Giới thiệu"),
-                    html.P(
-                        "Ứng dụng cho phép nhập tọa độ hoặc độ dài cạnh "
-                        "để tính toán đầy đủ thông số của tam giác."
-                    ),
-                ])
-            ], className="h-100"),
-            md=6
+layout = dbc.Container(
+    [
+        # ===== TITLE =====
+        dbc.Row(
+            dbc.Col(
+                html.Div(
+                    [
+                        html.H3(
+                            "Chọn phương thức phân tích",
+                            className="fw-bold text-center mb-5"
+                        ),
+                    ]
+                ),
+                md=12
+            )
         ),
 
-        # 2️⃣ Chức năng chính 1
-        dbc.Col(
-            dbc.Card([
-                dbc.CardBody([
-                    html.H4("📍 Tính theo tọa độ"),
-                    html.P("Nhập 3 điểm trong hệ trục Oxy."),
-                    dcc.Link("Truy cập", href="/calc/coord")
-                ])
-            ], className="h-100"),
-            md=6
-        ),
+        # ===== FEATURE CARDS =====
+        dbc.Row(
 
-        # 3️⃣ Chức năng chính 2
-        dbc.Col(
-            dbc.Card([
-                dbc.CardBody([
-                    html.H4("📐 Tính theo độ dài cạnh"),
-                    html.P("Nhập 3 cạnh để xác định tam giác."),
-                    dcc.Link("Truy cập", href="/calc/side")
-                ])
-            ], className="h-100"),
-            md=6
-        ),
+            [
 
-        # 4️⃣ Lịch sử
-        dbc.Col(
-            dbc.Card([
-                dbc.CardBody([
-                    html.H4("📜 Lịch sử tính toán"),
-                    html.P(
-                        "Xem lại các tam giác đã lưu trong cơ sở dữ liệu."
-                    ),
-                    dcc.Link("Xem lịch sử", href="/history")
-                ])
-            ], className="h-100"),
-            md=6
-        ),
+                dbc.Col(make_feature_card(
+                    "📍",
+                    "Theo tọa độ",
+                    "Nhập 3 điểm A, B, C trong mặt phẳng Oxy.",
+                    "/calc/coord",
+                    "primary"
+                ), md=4),
 
-    ], className="g-4")
+                dbc.Col(make_feature_card(
+                    "📐",
+                    "Theo cạnh / góc",
+                    "Nhập độ dài cạnh hoặc góc để xác định tam giác.",
+                    "/calc/side",
+                    "primary"
+                ), md=4),
 
-])
+                dbc.Col(make_feature_card(
+                    "📜",
+                    "Lịch sử",
+                    "Xem lại các tam giác đã phân tích.",
+                    "/history",
+                    "secondary"
+                ), md=4),
+
+            ],
+
+            className="g-4 mb-5"
+
+        )
+
+    ],
+
+    fluid=True
+)
+

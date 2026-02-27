@@ -1,34 +1,76 @@
-from dash import html, dcc
+from dash import html
 import dash_bootstrap_components as dbc
 import numpy as np
-from triangle import TriangleWithCoords
+from models.triangle import TriangleWithCoords
+
 
 def _create_table(x1, y1, x2, y2, x3, y3):
+
     tri = TriangleWithCoords(x1, y1, x2, y2, x3, y3)
+
     edges = tri.triangle_edges
     angles = edges.angles()
 
-    return dbc.Table(
+
+    def row(name,value):
+
+        return html.Tr(
+
+            [
+                html.Td(name,className="fw-semibold"),
+
+                html.Td(
+                    value,
+                    style={
+                        "textAlign":"right"
+                    }
+                )
+
+            ]
+
+        )
+
+
+    table = dbc.Table(
         [
-            html.Thead(html.Tr([
-                html.Th("Thông số"),
-                html.Th("Giá trị")
-            ])),
+            html.Thead(
+                html.Tr([
+                    html.Th("Thông số"),
+                    html.Th("Giá trị")
+                ]),
+                className="table-light"
+            ),
+
             html.Tbody([
-                html.Tr([html.Td("Cạnh a (BC)"), html.Td(f"{edges.a:.2f}")]),
-                html.Tr([html.Td("Cạnh b (AC)"), html.Td(f"{edges.b:.2f}")]),
-                html.Tr([html.Td("Cạnh c (AB)"), html.Td(f"{edges.c:.2f}")]),
-                html.Tr([html.Td("Loại tam giác"), html.Td(edges.triangle_type())]),
-                html.Tr([html.Td("Góc A"), html.Td(f"{np.degrees(angles['angle_a']):.2f}")]),
-                html.Tr([html.Td("Góc B"), html.Td(f"{np.degrees(angles['angle_b']):.2f}")]),
-                html.Tr([html.Td("Góc C"), html.Td(f"{np.degrees(angles['angle_c']):.2f}")]),
-                html.Tr([html.Td("Chu vi"), html.Td(f"{edges.perimeter():.2f}")]),
-                html.Tr([html.Td("Diện tích"), html.Td(f"{edges.area():.2f}")]),
-                html.Tr([html.Td("Bán kính nội tiếp"), html.Td(f"{edges.incircle_radius():.2f}")]),
-                html.Tr([html.Td("Bán kính ngoại tiếp"), html.Td(f"{edges.circumcircle_radius():.2f}")]),
+                row("Cạnh a (BC)",f"{edges.a:.2f}"),
+                row("Cạnh b (AC)",f"{edges.b:.2f}"),
+                row("Cạnh c (AB)",f"{edges.c:.2f}"),
+                row("Loại tam giác (theo góc)",edges.angle_type()),
+                row("Loại tam giác (theo cạnh)",edges.edge_type()),
+                row("Góc A",f"{np.degrees(angles['angle_a']):.2f}°"),
+                row("Góc B",f"{np.degrees(angles['angle_b']):.2f}°"),
+                row("Góc C",f"{np.degrees(angles['angle_c']):.2f}°"),
+                row("Chu vi",f"{edges.perimeter():.2f}"),
+                row("Diện tích",f"{edges.area():.2f}"),
+                row("Bán kính nội tiếp",f"{edges.incircle_radius():.2f}"),
+                row("Bán kính ngoại tiếp",f"{edges.circumcircle_radius():.2f}")
             ])
         ],
-        bordered=True,
         striped=True,
-        hover=True
+        hover=True,
+        responsive=True,
+        bordered=False,
+        className="align-middle"
+    )
+
+
+    return dbc.Card(
+        [
+            dbc.CardHeader(
+                "Kết quả phân tích tam giác",
+                className="fw-semibold bg-white border-0"
+            ),
+            dbc.CardBody(table)
+        ],
+        className="shadow-sm border-0"
     )

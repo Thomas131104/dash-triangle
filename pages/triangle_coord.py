@@ -3,7 +3,7 @@ from dash import html, dcc, Input, Output, State, callback
 import dash_bootstrap_components as dbc
 import numpy as np
 from __hidden.__table import _create_table
-import triangle
+import models.triangle as triangle
 import init_database
 from __hidden.__draw import _draw_triangle
 
@@ -42,7 +42,20 @@ input_form = dbc.Table(
 
 layout = html.Div([
     input_form, 
-    html.Button("Tính!", id="btn-calc"),
+    
+    dbc.Row(
+        dbc.Col(
+            dbc.Button(
+                "Tính toán",
+                id="btn-calc",
+                color="primary",
+                size="lg",
+                className="mt-3 w-100",
+            ),
+            width=4
+        ),
+        justify="center"
+    ),
 
     dbc.Alert(
         id="alert",

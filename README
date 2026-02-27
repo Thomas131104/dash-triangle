@@ -1,0 +1,185 @@
+# 📐 Ứng dụng Phân Tích Tam Giác – Dashboard Flask + Dash
+
+## 📌 Giới thiệu
+
+Đây là ứng dụng web dùng để tính toán và phân tích tam giác trong mặt phẳng tọa độ Oxy.
+
+Hệ thống được xây dựng theo kiến trúc tách lớp rõ ràng:
+
+- Dash: Giao diện người dùng (Dashboard)
+
+- Flask: API backend
+
+- SQLAlchemy: Quản lý cơ sở dữ liệu
+
+- Neon PostgreSQL: Cơ sở dữ liệu Cloud
+
+Ứng dụng cho phép người dùng:
+
+- Tính toán tam giác theo tọa độ 3 điểm
+
+- Tính toán tam giác theo độ dài 3 cạnh
+
+- Lưu và tra cứu lịch sử các phép tính
+
+- Hiển thị kết quả chi tiết
+
+---
+
+## 🏗 Kiến trúc hệ thống
+
+```cmd
+Trình duyệt
+    │
+    ▼
+Dash (Frontend)
+    │
+    ▼
+Flask API (api/)
+    │
+    ▼
+Service / Models
+    │
+    ▼
+Neon PostgreSQL (Cloud Database)
+```
+
+--- 
+
+## 📂 Cấu trúc thư mục
+
+```cmd
+D:\dash
+│
+├── api/               # Các route API (Blueprint)
+├── assets/            # CSS và tài nguyên giao diện
+├── models/            # Định nghĩa model cơ sở dữ liệu
+├── pages/             # Các trang Dash
+├── test/              # Test (pytest)
+├── __hidden/          # Module nội bộ (helper toán học)
+│
+├── init_database.py   # Khởi tạo cơ sở dữ liệu (không cần chạy file này vì đã khởi tạo trên Neon PostgreSQL)
+├── main.py            # Điểm khởi động ứng dụng
+├── server.py          # Cấu hình Flask server
+├── requirements.txt   # Danh sách thư viện
+└── README.md
+```
+
+---
+
+## ✨ Chức năng chính
+
+1. Tính theo tọa độ
+
+- Nhập tọa độ 3 điểm A, B, C
+
+- Tính:
+
+    - Độ dài các cạnh
+
+    - Góc
+
+    - Chu vi
+
+    - Diện tích
+
+    - Phân loại tam giác
+
+2. Tính theo độ dài cạnh
+
+- Nhập 3 cạnh a, b, c
+
+- Kiểm tra điều kiện tồn tại tam giác
+
+- Tính đầy đủ các thuộc tính
+
+3. Lịch sử
+
+Lưu kết quả vào database
+
+Tra cứu lại các tam giác đã tính
+
+---
+
+## 🛠 Công nghệ sử dụng
+
+- Python 3.x
+- Flask
+- Dash
+- Dash Bootstrap Components
+- SQLAlchemy
+- PostgreSQL (Neon Cloud)
+- Flasgger (Swagger API Documentation)
+- Pytest
+
+---
+
+## 🔐 Cấu hình biến môi trường
+
+Ứng dụng sử dụng PostgreSQL trên Neon Cloud.
+
+Tạo file `.env` trong thư mục gốc:
+
+DATABASE_URL=your_neon_connection_string
+
+Sau đó cài đặt:
+
+pip install python-dotenv
+
+---
+
+## ⚙️ Cài đặt và chạy chương trình
+
+Bước 1: Thiết lập môi trường
+
+- Khởi tạo môi trường: `python -m venv .venv`
+
+- Kích hoạt: `.venv\Scripts\activate`
+
+Bước 2: Cài đặt thư viện: pip install -r requirements.txt
+
+Bước 3: Chạy ứng dụng: python main.py
+
+Bước 4: Mở trình duyệt tại: http://127.0.0.1:8050
+
+Bổ sung: Swagger UI: http://127.0.0.1:8050/apidocs/
+
+---
+
+## 🧠 Định hướng thiết kế
+
+- Tách API và giao diện rõ ràng
+
+- Áp dụng Blueprint trong Flask
+
+- Tách models riêng biệt
+
+- Tổ chức project theo hướng có thể mở rộng
+
+- Dễ dàng bổ sung authentication hoặc deploy production
+
+---
+
+## 📈 Hướng phát triển tương lai
+
+- Thêm JWT authentication
+
+- Phân quyền người dùng
+
+- Docker hóa ứng dụng
+
+- Triển khai production (Gunicorn + Nginx)
+
+- Bổ sung tài liệu API
+
+---
+
+## 👨‍💻 Tác giả
+
+Dự án được thực hiện nhằm mục đích:
+
+- Luyện tập kiến trúc backend
+
+- Kết hợp Flask và Dash
+
+- Xây dựng dashboard toán học có cấu trúc rõ ràng

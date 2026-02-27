@@ -1,10 +1,10 @@
 import pytest
-from server import app_server as app
+from server import server
 
 
 @pytest.fixture
 def client():
-    app.config["TESTING"] = True
+    server.config["TESTING"] = True
 
-    with app.test_client() as client:
+    with server.test_client() as client:
         yield client

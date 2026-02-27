@@ -1,0 +1,121 @@
+swagger: "2.0"
+
+info:
+  title: Triangle Analyzer API
+  description: API tính toán và phân tích tam giác
+  version: 1.0.0
+
+host: localhost:8050
+schemes:
+  - http
+
+basePath: /
+
+paths:
+
+  /api/info:
+    get:
+      tags:
+        - System
+      summary: Lấy thông tin ứng dụng
+      responses:
+        '200':
+          description: Thông tin ứng dụng
+
+  /api/calculate/coords:
+    post:
+      tags:
+        - Triangle
+      summary: Tính toán tam giác từ tọa độ
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - x1
+                - y1
+                - x2
+                - y2
+                - x3
+                - y3
+              properties:
+                x1: { type: number }
+                y1: { type: number }
+                x2: { type: number }
+                y2: { type: number }
+                x3: { type: number }
+                y3: { type: number }
+      responses:
+        '200':
+          description: Kết quả phân tích
+
+  /api/calculate/edge/ccc:
+    post:
+      tags:
+        - Triangle
+      summary: Tính toán tam giác theo 3 cạnh
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - edge_1
+                - edge_2
+                - edge_3
+              properties:
+                edge_1: { type: number }
+                edge_2: { type: number }
+                edge_3: { type: number }
+      responses:
+        '200':
+          description: Kết quả phân tích
+
+  /api/calculate/edge/cgc:
+    post:
+      tags:
+        - Triangle
+      summary: Tính tam giác theo cạnh - góc - cạnh
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - edge_1
+                - edge_2
+                - angle_C
+              properties:
+                edge_1: { type: number }
+                edge_2: { type: number }
+                angle_C: { type: number }
+      responses:
+        '200':
+          description: Kết quả phân tích
+
+  /api/calculate/edge/gcg:
+    post:
+      tags:
+        - Triangle
+      summary: Tính tam giác theo góc - cạnh - góc
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - angle_A
+                - edge
+                - angle_B
+              properties:
+                angle_A: { type: number }
+                edge: { type: number }
+                angle_B: { type: number }
+      responses:
+        '200':
+          description: Kết quả phân tích

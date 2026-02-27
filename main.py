@@ -1,18 +1,43 @@
 from dash import html
 import dash
+import dash_bootstrap_components as dbc
 from server import app
+
+navbar = dbc.NavbarSimple(
+    brand="Triangle Analyzer",
+    brand_href="/",
+    children=[
+        dbc.NavItem(dbc.NavLink("Trang chủ", href="/", active="exact")),
+        dbc.NavItem(dbc.NavLink("Theo tọa độ", href="/calc/coord", active="exact")),
+        dbc.NavItem(dbc.NavLink("Theo cạnh", href="/calc/side", active="exact")),
+        dbc.NavItem(dbc.NavLink("Lịch sử", href="/history", active="exact")),
+    ],
+    color="white",
+    dark=False,
+    className="shadow-sm",
+    fixed="top"
+)
+
+
 
 app.layout = html.Div([
 
-    # ===== HEADER =====
+    navbar,
+
     html.Header([
-        html.Div([
-            html.H1("Chương trình tam giác"),
-            html.P("Tính toán – Phân tích – Lưu trữ dữ liệu hình học")
-        ], className="container header-content")
+        dbc.Row(
+            dbc.Col(
+                html.Div([
+                    html.H1("Triangle Analyzer", className="hero-title"),
+                    html.P(
+                        "Phân tích – Tính toán – Lưu trữ dữ liệu hình học phẳng",
+                        className="hero-subtitle",
+                    ),
+                ], className="hero-section text-center")
+            )
+        )
     ]),
 
-    # ===== MAIN =====
     html.Main([
         html.Div(
             dash.page_container,
@@ -20,7 +45,6 @@ app.layout = html.Div([
         )
     ]),
 
-    # ===== FOOTER =====
     html.Footer([
         html.Div([
             html.Small("© 2026 Mus · Triangle Analysis App")
@@ -28,6 +52,7 @@ app.layout = html.Div([
     ])
 
 ])
+
 
 if __name__ == "__main__":
     app.run(debug=True)

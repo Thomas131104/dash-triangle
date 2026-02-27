@@ -1,7 +1,7 @@
 from __hidden.__draw import _draw_triangle
 from __hidden.__table import _create_table
 from init_database import TriangleDomain, get_session
-import triangle
+import models.triangle as triangle
 from flask import jsonify
 import datetime
 import dash_bootstrap_components as dbc
