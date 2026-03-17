@@ -1,12 +1,16 @@
 from flask import Flask
 from dash import Dash
 import dash_bootstrap_components as dbc
+from dash_bootstrap_templates import load_figure_template
 
 from api.triangle_api import triangle_bp
 from api.history_api import history_bp
+from layout import layout
 
 from flasgger import Swagger
 import yaml
+
+load_figure_template("lux")
 
 # ===== Flask server =====
 server = Flask(__name__)
@@ -51,3 +55,4 @@ app = Dash(
 )
 
 app.title = "My web"
+app.layout = layout

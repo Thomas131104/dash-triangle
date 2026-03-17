@@ -68,7 +68,7 @@ layout = dbc.Container(
 
             ],
 
-            className="g-4 mb-5"
+            className="g-3 mb-5"
 
         )
 

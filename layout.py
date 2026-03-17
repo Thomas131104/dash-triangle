@@ -1,7 +1,6 @@
 from dash import html
 import dash
 import dash_bootstrap_components as dbc
-from server import app
 
 # 1️⃣ Sửa Navbar: Chuyển sang Dark mode để chữ tự sáng lên
 navbar = dbc.NavbarSimple(
@@ -21,7 +20,7 @@ navbar = dbc.NavbarSimple(
 
 
 
-app.layout = html.Div([
+layout = html.Div([
     navbar,
 
     html.Header([
