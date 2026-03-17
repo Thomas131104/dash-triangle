@@ -17,23 +17,23 @@ layout = html.Div([
 
         dbc.Row([
             dbc.Col("Cạnh 1", width=3),
-            dbc.Col(dcc.Input(id="c1_a", type="number", value=0), width=3),
-            dbc.Col(dcc.Input(id="c1_b", type="number", value=0), width=3),
-            dbc.Col(dcc.Input(id="c1_c", type="number", value=1, min=0), width=3),
+            dbc.Col(dbc.Input(id="c1_a", type="number", value=0, className="mb-2"), width=3),
+            dbc.Col(dbc.Input(id="c1_b", type="number", value=0, className="mb-2"), width=3),
+            dbc.Col(dbc.Input(id="c1_c", type="number", value=1, min=0, className="mb-2"), width=3),
         ], className="mb-2"),
 
         dbc.Row([
             dbc.Col("Cạnh 2", width=3),
-            dbc.Col(dcc.Input(id="c2_a", type="number", value=0), width=3),
-            dbc.Col(dcc.Input(id="c2_b", type="number", value=0), width=3),
-            dbc.Col(dcc.Input(id="c2_c", type="number", value=1, min=0), width=3),
+            dbc.Col(dbc.Input(id="c2_a", type="number", value=0, className="mb-2"), width=3),
+            dbc.Col(dbc.Input(id="c2_b", type="number", value=0, className="mb-2"), width=3),
+            dbc.Col(dbc.Input(id="c2_c", type="number", value=1, min=0, className="mb-2"), width=3),
         ], className="mb-2"),
 
         dbc.Row([
             dbc.Col("Cạnh 3", width=3),
-            dbc.Col(dcc.Input(id="c3_a", type="number", value=0), width=3),
-            dbc.Col(dcc.Input(id="c3_b", type="number", value=0), width=3),
-            dbc.Col(dcc.Input(id="c3_c", type="number", value=1, min=0), width=3),
+            dbc.Col(dbc.Input(id="c3_a", type="number", value=0), width=3, className="mb-2"),
+            dbc.Col(dbc.Input(id="c3_b", type="number", value=0), width=3, className="mb-2"),
+            dbc.Col(dbc.Input(id="c3_c", type="number", value=1, min=0), width=3, className="mb-2"),
         ], className="mb-2"),
 
     ]),
@@ -63,6 +63,8 @@ layout = html.Div([
     id="ccc"
 )
 
+
+
 @callback(
     [
         Output("o1", "children"),
@@ -86,16 +88,21 @@ layout = html.Div([
     prevent_initial_call=True
 )
 def calc_ccc(n, c1_a, c1_b, c1_c, c2_a, c2_b, c2_c, c3_a, c3_b, c3_c):
+    # 1. Chặn None (Chưa bấm hoặc nhập thiếu thì không làm gì)
     if None in [c1_a, c1_b, c1_c, c2_a, c2_b, c2_c, c3_a, c3_b, c3_c]:
         raise PreventUpdate
 
-    # tính giá trị thực
-    c1 = c1_a + c1_b * math.sqrt(c1_c)
-    c2 = c2_a + c2_b * math.sqrt(c2_c)
-    c3 = c3_a + c3_b * math.sqrt(c3_c)
+    # 2. Tính toán an toàn (Bọc max(..., 0) để tránh lỗi căn số âm)
+    c1 = c1_a + c1_b * math.sqrt(max(c1_c, 0))
+    c2 = c2_a + c2_b * math.sqrt(max(c2_c, 0))
+    c3 = c3_a + c3_b * math.sqrt(max(c3_c, 0))
 
-    # Tam giác không tồn tại
-    if c1 + c2 <= c3 or c1 + c3 <= c2 or c2 + c3 <= c1:
+    # 3. GỌI HÀM COMMON ĐỂ LƯU DATABASE TRƯỚC
+    # (Hàm _solve_ccc_common của Mus sẽ lo việc khởi tạo TriangleDomain và commit)
+    table, graph = _solve_ccc_common(c1, c2, c3)
+
+    # 4. KIỂM TRA ĐIỀU KIỆN ĐỂ HIỂN THỊ ALERT (Sau khi đã lưu vết)
+    if c1 + c2 <= c3 or c1 + c3 <= c2 or c2 + c3 <= c1 or any(c <= 0 for c in [c1, c2, c3]):
         return (
             dbc.Alert(
                 "Tam giác không tồn tại",
@@ -104,4 +111,5 @@ def calc_ccc(n, c1_a, c1_b, c1_c, c2_a, c2_b, c2_c, c3_a, c3_b, c3_c):
             ),
             None
         )
-    return _solve_ccc_common(c1, c2, c3)
+
+    return table, graph

@@ -7,24 +7,26 @@ import datetime
 import dash_bootstrap_components as dbc
 import math
 
+
+
 def _solve_ccc_common(a, b, c):
+    # 1. Tính toán tọa độ an toàn (Vệ sĩ tránh chia cho 0)
+    x, y = 0.0, 0.0
+    if c != 0:
+        try:
+            x = (b**2 + c**2 - a**2) / (2*c)
+            y = math.sqrt(max(b**2 - x**2, 0))
+        except ZeroDivisionError:
+            x, y = 0.0, 0.0
+    else:
+        # Nếu c=0, mặc định tọa độ là (0,0), (0,0), (0,0)
+        x, y = 0.0, 0.0
 
-    if a + b <= c or a + c <= b or b + c <= a:
-        return dbc.Alert("Tam giác không tồn tại", color="danger"), None
-
-    x = (b**2 + c**2 - a**2) / (2*c)
-    y = math.sqrt(max(b**2 - x**2, 0))
-
-    graph = _draw_triangle(0, 0, c, 0, x, y)
-    table = _create_table(0, 0, c, 0, x, y)
-
+    # 2. Khởi tạo và Lưu DB (Bất kể tam giác có xịn hay không)
     domain = TriangleDomain(
-        x1 = 0,
-        y1 = 0,
-        x2 = c,
-        y2 = 0,
-        x3 = x,
-        y3 = y,
+        x1 = 0, y1 = 0,
+        x2 = c, y2 = 0,
+        x3 = x, y3 = y,
         by = "web"
     )
 
@@ -34,7 +36,12 @@ def _solve_ccc_common(a, b, c):
             session.commit()
         except Exception as e:
             session.rollback()
-            print(e)
 
+    # 3. Logic hiển thị giao diện (Chỗ này mới chặn người dùng xem)
+    if a + b <= c or a + c <= b or b + c <= a:
+        return dbc.Alert("Tam giác không tồn tại", color="danger"), None
+
+    graph = _draw_triangle(0, 0, c, 0, x, y)
+    table = _create_table(0, 0, c, 0, x, y)
 
     return table, graph

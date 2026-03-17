@@ -1,7 +1,6 @@
 import dash
 from dash import html, dcc, Input, Output, State, callback
 import dash_bootstrap_components as dbc
-import numpy as np
 from __hidden.__table import _create_table
 import models.triangle as triangle
 import init_database
@@ -21,18 +20,18 @@ input_form = dbc.Table(
         html.Tbody([
             html.Tr([
                 html.Td("Cạnh 1"),
-                html.Td(dcc.Input(id="x1", type="number", value=0)),
-                html.Td(dcc.Input(id="y1", type="number", value=0)),
+                html.Td(dbc.Input(id="x1", type="number", value=0)),
+                html.Td(dbc.Input(id="y1", type="number", value=0)),
             ]),
             html.Tr([
                 html.Td("Cạnh 2"),
-                html.Td(dcc.Input(id="x2", type="number", value=0)),
-                html.Td(dcc.Input(id="y2", type="number", value=0)),
+                html.Td(dbc.Input(id="x2", type="number", value=0)),
+                html.Td(dbc.Input(id="y2", type="number", value=0)),
             ]),
             html.Tr([
                 html.Td("Cạnh 3"),
-                html.Td(dcc.Input(id="x3", type="number", value=0)),
-                html.Td(dcc.Input(id="y3", type="number", value=0)),
+                html.Td(dbc.Input(id="x3", type="number", value=0)),
+                html.Td(dbc.Input(id="y3", type="number", value=0)),
             ]),
         ])
     ],
@@ -90,27 +89,11 @@ def calculate_triangle(n_clicks, x1, y1, x2, y2, x3, y3):
     if n_clicks is None:
         return None, None, None, False
 
-    # 1️⃣ Validate input
     if any(v is None for v in [x1, y1, x2, y2, x3, y3]):
         return None, None, "Nhập thiếu tọa độ", True
 
-    A = triangle.Point(x1, y1)
-    B = triangle.Point(x2, y2)
-    C = triangle.Point(x3, y3)
-
-    AB = A.distance_to_other(B)
-    AC = A.distance_to_other(C)
-    BC = B.distance_to_other(C)
-
-    tri = triangle.Triangle(AB, AC, BC)
-
-    if not tri.is_exist():
-        return None, {}, "Ba điểm không tạo thành tam giác", True
-
-    # 2️⃣ Vẽ hình
-    fig = _draw_triangle(x1, y1, x2, y2, x3, y3)
-
-    # 3️⃣ Lưu DB
+    # 3️⃣ LƯU DB TRƯỚC (Để ghi nhận mọi lần nhấn nút của người dùng)
+    # Vì trong __init__ của TriangleDomain Mus đã có check is_valid rồi nên rất an toàn
     record = init_database.TriangleDomain(
         x1=x1, y1=y1,
         x2=x2, y2=y2,
@@ -119,10 +102,28 @@ def calculate_triangle(n_clicks, x1, y1, x2, y2, x3, y3):
     )
 
     with init_database.get_session() as session:
-        session.add(record)
-        session.commit()
+        try:
+            session.add(record)
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            print(f"Lỗi DB: {e}")
 
-    # 4️⃣ Bảng kết quả
+    # 1️⃣ Kiểm tra logic hình học để hiển thị thông báo
+    A = triangle.Point(x1, y1)
+    B = triangle.Point(x2, y2)
+    C = triangle.Point(x3, y3)
+
+    AB = A.distance_to_other(B)
+    AC = A.distance_to_other(C)
+    BC = B.distance_to_other(C)
+    tri = triangle.Triangle(AB, AC, BC)
+
+    if not tri.is_exist():
+        return None, {}, "Ba điểm không tạo thành tam giác", True
+
+    # 2️⃣ Vẽ hình và 4️⃣ Bảng kết quả (Chỉ chạy khi tam giác hợp lệ)
+    fig = _draw_triangle(x1, y1, x2, y2, x3, y3)
     table = _create_table(x1, y1, x2, y2, x3, y3)
 
     return table, fig, None, False

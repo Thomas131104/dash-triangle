@@ -8,15 +8,15 @@ dash.register_page(__name__, path="/")
 def make_feature_card(icon, title, desc, link, color):
     return dbc.Card(
         dbc.CardBody([
-            html.Div(icon, className="feature-icon"),
-            html.H5(title, className="mt-3"),
-            html.P(desc, className="text-muted"),
+            html.Div(icon, className="card-icon"),
+            html.H5(title, className="mt-3 text-white-50"),
+            html.P(desc, className="text-white-50 mb-4"),
             dcc.Link(
-                dbc.Button("Truy cập", color=color, className="w-100"),
+                dbc.Button("Truy cập", color=color, className="w-100 rounded-pill"),
                 href=link
             )
         ]),
-        className="feature-card h-100 text-center"
+        className="main-card"
     )
 
 
@@ -47,7 +47,7 @@ layout = dbc.Container(
                     "Theo tọa độ",
                     "Nhập 3 điểm A, B, C trong mặt phẳng Oxy.",
                     "/calc/coord",
-                    "primary"
+                    "success"
                 ), md=4),
 
                 dbc.Col(make_feature_card(
@@ -55,7 +55,7 @@ layout = dbc.Container(
                     "Theo cạnh / góc",
                     "Nhập độ dài cạnh hoặc góc để xác định tam giác.",
                     "/calc/side",
-                    "primary"
+                    "warning"
                 ), md=4),
 
                 dbc.Col(make_feature_card(
@@ -63,7 +63,7 @@ layout = dbc.Container(
                     "Lịch sử",
                     "Xem lại các tam giác đã phân tích.",
                     "/history",
-                    "secondary"
+                    "info"
                 ), md=4),
 
             ],

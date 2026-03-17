@@ -1,77 +1,93 @@
-/* ================= GENERAL ================= */
-body {
-    background: #f4f6f9;
-    font-family: "Inter", "Segoe UI", sans-serif;
-    color: #2c3e50;
-    padding-top: 70px;
+/* TRIANGLE ANALYZER - CUSTOM DARK THEME
+    Giao diện tối ưu cho mắt và tập trung vào dữ liệu 
+*/
+
+:root {
+    --bg-dark: #0f111a;         /* Nền sâu thẳm */
+    --card-bg: #1a1d2b;         /* Nền card nhẹ hơn một chút */
+    --primary-grad: linear-gradient(135deg, #2c539e, #4b39b3); /* Màu hero dịu hơn */
+    --accent-color: #4a90e2;
+    --text-main: #e2e4e9;
+    --text-muted: #94a3b8;
 }
 
-/* ================= HERO ================= */
-.hero-section {
-    padding: 60px 0 40px 0;
+/* RESET NỀN TOÀN TRANG */
+body {
+    background-color: var(--bg-dark) !important;
+    color: var(--text-main) !important;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    margin: 0;
+}
+
+/* HERO BOX - Giảm độ rực, tăng độ sâu */
+.hero-box {
+    background: var(--primary-grad);
+    color: white;
+    padding: 60px 40px;
+    border-radius: 24px;
+    text-align: center;
+    box-shadow: 0px 20px 50px rgba(0, 0, 0, 0.4);
+    margin-bottom: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .hero-title {
     font-size: 42px;
-    font-weight: 700;
+    font-weight: 800;
+    letter-spacing: -1px;
+    margin-bottom: 10px;
 }
 
-.hero-subtitle {
+.hero-sub {
     font-size: 18px;
-    color: #6c757d;
+    opacity: 0.85;
+    font-weight: 300;
 }
 
-/* ================= SECTION TITLE ================= */
-.section-title {
-    font-weight: 600;
-    margin-bottom: 15px;
+/* MAIN CONTENT CONTAINER */
+.main-content {
+    padding-top: 100px; /* Tránh bị dính vào Navbar fixed */
+    padding-bottom: 60px;
 }
 
-/* ================= CARDS ================= */
-.custom-card {
-    border: none;
-    border-radius: 16px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-}
-
-.feature-card {
-    border: none;
-    border-radius: 18px;
-    padding: 25px 20px;
-    transition: all 0.25s ease;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
-}
-
-.feature-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
-}
-
-.feature-icon {
-    font-size: 40px;
-}
-
-/* ================= BUTTON ================= */
-.btn {
-    border-radius: 12px !important;
-    font-weight: 500;
-}
-
-/* ================= TABLE ================= */
-table {
-    border-radius: 12px;
-    overflow: hidden;
-}
-
-thead th {
-    background-color: #f1f3f5 !important;
-}
-
-/* ================= FOOTER ================= */
-footer {
-    margin-top: 40px;
+/* CARD - Thiết kế kính mờ (Glassmorphism) nhẹ */
+.main-card {
+    background-color: var(--card-bg) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    border-radius: 20px;
     padding: 20px;
-    text-align: center;
-    font-size: 14px;
-    color: #adb5bd;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    height: 100%;
 }
+
+/* HIỆU ỨNG HOVER - Nhấc lên và sáng viền */
+.main-card:hover {
+    transform: translateY(-12px);
+    box-shadow: 0px 25px 50px rgba(0, 0, 0, 0.5);
+    border-color: var(--accent-color) !important;
+}
+
+/* ICON TRONG CARD */
+.card-icon {
+    font-size: 48px;
+    margin-bottom: 20px;
+    display: block;
+    filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));
+}
+
+/* FOOTER ĐỒNG BỘ */
+footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 30px 0;
+    margin-top: auto;
+    background-color: #08090f;
+}
+
+/* ĐIỀU CHỈNH NAVBAR ĐỂ KHÔNG BỊ TRẮNG */
+.navbar {
+    backdrop-filter: blur(10px); /* Hiệu ứng mờ nền phía sau */
+    background-color: rgba(15, 17, 26, 0.8) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+

@@ -103,15 +103,13 @@ class TriangleWithCoords:
         self.A = Point(x1, y1) 
         self.B = Point(x2, y2) 
         self.C = Point(x3, y3) 
-        edges = Triangle( 
+        self.edges = Triangle( 
             a = self.B.distance_to_other(self.C), 
             b = self.A.distance_to_other(self.C), 
             c = self.A.distance_to_other(self.B) 
         ) 
-        if not edges.is_exist(): 
-            raise ValueError("3 điểm thẳng hàng không tạo thành tam giác!") 
-        
-        self.triangle_edges = edges 
+        self.valid = self.edges.is_exist()
+        self.triangle_edges = self.edges
         
         ## Các hàm dưới đây trả về theo kiểu dict với các keys: 
         ## intersect: trọng tâm / trực tâm / tâm đường tròn nội tiếp / ngoại tiếp của hàm đó 
@@ -134,6 +132,9 @@ class TriangleWithCoords:
     
     ## Trực tâm - 3 đường cao 
     def orthocenter(self): # Hàm này tìm chân đường cao từ first xuống cạnh second-third 
+        
+        if not self.valid: return None
+        
         def __foot_of_altitude(first: Point, second: Point, third: Point): 
             # Vector cạnh second-third 
             dx = third.x - second.x 
@@ -171,9 +172,6 @@ class TriangleWithCoords:
         a2, b2, c2 = line_from_points(B, H_B) 
         det = a1 * b2 - a2 * b1 
         
-        if np.isclose(det, 0): 
-            raise ValueError("Không xác định trực tâm") 
-        
         x = (c1 * b2 - c2 * b1) / det 
         y = (a1 * c2 - a2 * c1) / det 
         return { 
@@ -187,14 +185,15 @@ class TriangleWithCoords:
     
     ## đường tròn ngoại tiếp - 3 đường trung trực 
     def circumcircle(self): 
+        
+        if not self.valid: return None
+        
         A, B, C = self.A, self.B, self.C 
         x1, y1 = A.x, A.y 
         x2, y2 = B.x, B.y 
         x3, y3 = C.x, C.y 
         
         D = 2 * ( x1*(y2 - y3) + x2*(y3 - y1) + x3*(y1 - y2) ) 
-        if np.isclose(D, 0): 
-            raise ValueError("Ba điểm thẳng hàng!") 
         
         Ox = ( (x1**2 + y1**2)*(y2 - y3) + (x2**2 + y2**2)*(y3 - y1) + (x3**2 + y3**2)*(y1 - y2) ) / D 
         Oy = ( (x1**2 + y1**2)*(x3 - x2) + (x2**2 + y2**2)*(x1 - x3) + (x3**2 + y3**2)*(x2 - x1) ) / D 
@@ -240,6 +239,9 @@ class TriangleWithCoords:
         
     ## đường trọn nội tiếp - 3 đường phân giác 
     def incircle(self): 
+
+        if not self.valid: return None
+
         A, B, C = self.A, self.B, self.C 
         
         def __angle_bisector(first: Point, second: Point, third: Point): 
@@ -268,8 +270,6 @@ class TriangleWithCoords:
         a2, b2, c2 = line_from_points(B, E) 
         det = a1 * b2 - a2 * b1 
         
-        if np.isclose(det, 0): 
-            raise ValueError("Không xác định tâm nội tiếp") 
         
         Ix = (c1 * b2 - c2 * b1) / det 
         Iy = (a1 * c2 - a2 * c1) / det 

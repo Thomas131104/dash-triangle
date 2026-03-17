@@ -16,21 +16,21 @@ layout = html.Div([
         # Góc 1
         dbc.Row([
             dbc.Col("Góc 1 (độ)", width=3),
-            dbc.Col(dcc.Input(id="gcg_angle1", type="number", value=45), width=9),
+            dbc.Col(dbc.Input(id="gcg_angle1", type="number", value=45, className="mb-2"), width=9),
         ], className="mb-2"),
 
         # Cạnh giữa
         dbc.Row([
             dbc.Col("Cạnh giữa (x = a + b√c)", width=3),
-            dbc.Col(dcc.Input(id="gcg_c_a", type="number", value=0), width=3),
-            dbc.Col(dcc.Input(id="gcg_c_b", type="number", value=0), width=3),
-            dbc.Col(dcc.Input(id="gcg_c_c", type="number", value=1, min=0), width=3),
+            dbc.Col(dbc.Input(id="gcg_c_a", type="number", value=0, className="mb-2"), width=3),
+            dbc.Col(dbc.Input(id="gcg_c_b", type="number", value=0, className="mb-2"), width=3),
+            dbc.Col(dbc.Input(id="gcg_c_c", type="number", value=1, min=0, className="mb-2"), width=3),
         ], className="mb-2"),
 
         # Góc 2
         dbc.Row([
             dbc.Col("Góc 2 (độ)", width=3),
-            dbc.Col(dcc.Input(id="gcg_angle2", type="number", value=45), width=9),
+            dbc.Col(dbc.Input(id="gcg_angle2", type="number", value=45, className="mb-2"), width=9),
         ], className="mb-2"),
 
     ]),
@@ -75,27 +75,26 @@ id="gcg"
     ],
     prevent_initial_call=True
 )
-def calc_gcg(n, angle1_deg,
-             c_a, c_b, c_c,
-             angle2_deg):
-
+def calc_gcg(n, angle1_deg, c_a, c_b, c_c, angle2_deg):
     if None in [angle1_deg, c_a, c_b, c_c, angle2_deg]:
         raise PreventUpdate
 
-    if angle1_deg <= 0 or angle2_deg <= 0:
-        return dbc.Alert("Góc phải > 0", color="danger"), None
-
-    if angle1_deg + angle2_deg >= 180:
-        return dbc.Alert("Tổng 2 góc phải < 180°", color="danger"), None
-
-    base = c_a + c_b * math.sqrt(c_c)
-
+    base = c_a + c_b * math.sqrt(max(c_c, 0))
     A = math.radians(angle1_deg)
     B = math.radians(angle2_deg)
-    C = math.pi - A - B
+    
+    C_rad = math.pi - A - B
+    sin_C = math.sin(C_rad)
+    
+    if abs(sin_C) < 1e-9:
+        side1, side2 = 0.0, 0.0
+    else:
+        side1 = abs(base * math.sin(B) / sin_C)
+        side2 = abs(base * math.sin(A) / sin_C)
 
-    # Định lý sin
-    side1 = base * math.sin(A) / math.sin(C)
-    side2 = base * math.sin(B) / math.sin(C)
+    table, graph = _solve_ccc_common(side1, side2, base)
 
-    return _solve_ccc_common(side1, side2, base)
+    if angle1_deg <= 0 or angle2_deg <= 0 or (angle1_deg + angle2_deg) >= 180 or base <= 0:
+        return dbc.Alert("Dữ liệu không tạo thành tam giác (Tổng góc >= 180° hoặc cạnh <= 0)", color="danger"), None
+
+    return table, graph
