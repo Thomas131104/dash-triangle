@@ -44,7 +44,7 @@ Deployment: Render.
 
 # Pictures
 
-![]()
+![Trang chính](/assets/images/main-page.jpeg)
 
 ---
 
