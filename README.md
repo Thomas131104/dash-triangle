@@ -1,185 +1,86 @@
-# 📐 Ứng dụng Phân Tích Tam Giác – Dashboard Flask + Dash
+# 📐 Triangle Analyzer with Plotly Dash
 
-## 📌 Giới thiệu
-
-Đây là ứng dụng web dùng để tính toán và phân tích tam giác trong mặt phẳng tọa độ Oxy.
-
-Hệ thống được xây dựng theo kiến trúc tách lớp rõ ràng:
-
-- Dash: Giao diện người dùng (Dashboard)
-
-- Flask: API backend
-
-- SQLAlchemy: Quản lý cơ sở dữ liệu
-
-- Neon PostgreSQL: Cơ sở dữ liệu Cloud
-
-Ứng dụng cho phép người dùng:
-
-- Tính toán tam giác theo tọa độ 3 điểm
-
-- Tính toán tam giác theo độ dài 3 cạnh
-
-- Lưu và tra cứu lịch sử các phép tính
-
-- Hiển thị kết quả chi tiết
+A high-precision, interactive web application for geometric triangle analysis.
 
 ---
 
-## 🏗 Kiến trúc hệ thống
+# ✨ Key Features
 
-```cmd
-Trình duyệt
-    │
-    ▼
-Dash (Frontend)
-    │
-    ▼
-Flask API (api/)
-    │
-    ▼
-Service / Models
-    │
-    ▼
-Neon PostgreSQL (Cloud Database)
+Interactive Coordinates: Input vertices (A, B, C) to instantly visualize the triangle.
+
+Special Points & Lines:
+
+- Centroid (G) with Medians.
+
+- Orthocenter (H) with Altitudes (including extended lines for obtuse triangles).
+
+- Incenter (I) with Angle Bisectors and Incircle.
+
+- Circumcenter (O) with Perpendicular Bisectors and Circumcircle.
+
+- Euler Line: Visualizing the collinearity of O, G, and H.
+
+Advanced Visualization:
+
+- 1:1 Aspect Ratio: Ensures geometric shapes (like circles) are perfectly rendered without distortion.
+
+- Smart Auto-scaling: Intelligently adjusts the viewport to keep the triangle visible while handling far-off points (like H or O in obtuse cases).
+
+- Dark Mode UI: A clean, modern interface built with dash-bootstrap-components.
+
+---
+
+# 🛠 Tech Stack
+
+Backend/Logic: Python, NumPy (for vector geometry).
+
+Frontend: Dash, Plotly (for interactive graphing).
+
+Styling: Dash Bootstrap Components (Slate/Dark theme).
+
+Deployment: Render.
+
+---
+
+# Pictures
+
+![]()
+
+---
+
+# 🚀 Installation & Running Locally
+
+1. Clone the repo:
+
+```bash
+git clone https://github.com/mus-gramming/dash-triangle.git
+cd dash-triangle
 ```
 
---- 
+2. Install dependencies:
 
-## 📂 Cấu trúc thư mục
-
-```cmd
-D:\dash
-│
-├── api/               # Các route API (Blueprint)
-├── assets/            # CSS và tài nguyên giao diện
-├── models/            # Định nghĩa model cơ sở dữ liệu
-├── pages/             # Các trang Dash
-├── test/              # Test (pytest)
-├── __hidden/          # Module nội bộ (helper toán học)
-│
-├── init_database.py   # Khởi tạo cơ sở dữ liệu (không cần chạy file này vì đã khởi tạo trên Neon PostgreSQL)
-├── main.py            # Điểm khởi động ứng dụng
-├── server.py          # Cấu hình Flask server
-├── requirements.txt   # Danh sách thư viện
-└── README.md
+```bash
+pip install -r requirements.txt
 ```
 
----
+3. Run the app:
 
-## ✨ Chức năng chính
+- With Windows: 
 
-1. Tính theo tọa độ
+```bash
+python run.py
+```
 
-- Nhập tọa độ 3 điểm A, B, C
+- With Linux:
 
-- Tính:
+```bash
+gunicorn server:server
+```
 
-    - Độ dài các cạnh
-
-    - Góc
-
-    - Chu vi
-
-    - Diện tích
-
-    - Phân loại tam giác
-
-2. Tính theo độ dài cạnh
-
-- Nhập 3 cạnh a, b, c
-
-- Kiểm tra điều kiện tồn tại tam giác
-
-- Tính đầy đủ các thuộc tính
-
-3. Lịch sử
-
-Lưu kết quả vào database
-
-Tra cứu lại các tam giác đã tính
+Open http://127.0.0.1:5000 in your browser.
 
 ---
 
-## 🛠 Công nghệ sử dụng
+# About the project
 
-- Python 3.x
-- Flask
-- Dash
-- Dash Bootstrap Components
-- SQLAlchemy
-- PostgreSQL (Neon Cloud)
-- Flasgger (Swagger API Documentation)
-- Pytest
-
----
-
-## 🔐 Cấu hình biến môi trường
-
-Ứng dụng sử dụng PostgreSQL trên Neon Cloud.
-
-Tạo file `.env` trong thư mục gốc:
-
-DATABASE_URL=your_neon_connection_string
-
-Sau đó cài đặt:
-
-pip install python-dotenv
-
----
-
-## ⚙️ Cài đặt và chạy chương trình
-
-Bước 1: Thiết lập môi trường
-
-- Khởi tạo môi trường: `python -m venv .venv`
-
-- Kích hoạt: `.venv\Scripts\activate`
-
-Bước 2: Cài đặt thư viện: pip install -r requirements.txt
-
-Bước 3: Chạy ứng dụng: python main.py
-
-Bước 4: Mở trình duyệt tại: http://127.0.0.1:8050
-
-Bổ sung: Swagger UI: http://127.0.0.1:8050/apidocs/
-
----
-
-## 🧠 Định hướng thiết kế
-
-- Tách API và giao diện rõ ràng
-
-- Áp dụng Blueprint trong Flask
-
-- Tách models riêng biệt
-
-- Tổ chức project theo hướng có thể mở rộng
-
-- Dễ dàng bổ sung authentication hoặc deploy production
-
----
-
-## 📈 Hướng phát triển tương lai
-
-- Thêm JWT authentication
-
-- Phân quyền người dùng
-
-- Docker hóa ứng dụng
-
-- Triển khai production (Gunicorn + Nginx)
-
-- Bổ sung tài liệu API
-
----
-
-## 👨‍💻 Tác giả
-
-Dự án được thực hiện nhằm mục đích:
-
-- Luyện tập kiến trúc backend
-
-- Kết hợp Flask và Dash
-
-- Xây dựng dashboard toán học có cấu trúc rõ ràng
+This isn't just another geometry tool. This project is a deep dive into the precision of coordinate geometry. I built it to solve a common frustration: distorted shapes in web-based graphing. By implementing custom auto-scaling logic and strict aspect ratio controls, I ensured that every incircle and circumcircle is mathematically and visually perfect. It's my way of blending Information Systems logic with the elegance of Mathematics.

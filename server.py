@@ -52,20 +52,15 @@ app = Dash(
     external_stylesheets=[dbc.themes.BOOTSTRAP],
     use_pages=True,
     suppress_callback_exceptions=True,
+    update_title=None,
     meta_tags=[
-        # 1. Giúp hiển thị đẹp trên điện thoại (Responsive)
         {"name": "viewport", "content": "width=device-width, initial-scale=1"},
-        
-        # 2. Mô tả trang web khi chia sẻ link (Description)
         {"name": "description", "content": "Công cụ tính toán và vẽ tam giác thông minh"},
-        
-        # 3. Từ khóa (Keywords) cho các công cụ tìm kiếm
         {"name": "keywords", "content": "triangle, geometry, plotly, dash, euler line, circumcircle"},
-        
-        # 4. Tác giả (Chính là Mus đấy!)
+        {"rel": "icon", "type": "image/png", "href": "/static/images/favicon.png"},
         {"name": "author", "content": "Mus"}
     ]
 )
 
-app.title = "My web"
+app.title = "Triangle Analyzer"
 app.layout = layout
