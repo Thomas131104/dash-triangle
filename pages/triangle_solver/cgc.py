@@ -1,4 +1,4 @@
-from dash import html, dcc, Input, Output, State, callback
+from dash import html, dcc, Input, Output, State, callback, clientside_callback, ClientsideFunction
 import dash_bootstrap_components as dbc
 import math
 from __hidden.__solve import _solve_ccc_common
@@ -7,7 +7,6 @@ from __hidden.__safe import _safe_extract_to_real_num
 
 
 
-# Style đồng nhất với file CCC
 input_style = {"width": "80px", "textAlign": "center"}
 res_style = {"width": "120px", "fontWeight": "bold", "color": "#4a90e2", "fontSize": "1.1rem"}
 
@@ -70,13 +69,25 @@ layout = html.Div([
 
     dbc.Row([
         dbc.Col(html.Div(id="o_cgc"), width=12, lg=4),
-        dbc.Col(dcc.Graph(id="output_cgc", figure=_draw_default()), width=12, lg=8)
+        dbc.Col(
+            dbc.Spinner(
+                dcc.Graph(id="output_cgc", figure=_draw_default()),
+                color="success",
+                type="grow" # Kiểu hiệu ứng "nở ra" nhìn rất hiện đại
+            ),
+            width=12, 
+            lg=8
+        )
     ], className="mt-4")
 ], id="cgc", className="p-3")
 
 
 
-@callback(
+clientside_callback(
+    ClientsideFunction(
+        namespace='clientside',
+        function_name='check_cgc'
+    ),
     [
         Output("cgc_c1_val", "value"),
         Output("cgc_c2_val", "value"),
@@ -88,19 +99,6 @@ layout = html.Div([
         Input("cgc_angle", "value")
     ]
 )
-def update_cgc_inputs(c1a, c1b, c1c, c2a, c2b, c2c, angle):
-    v1 = _safe_extract_to_real_num(c1a, c1b, c1c)
-    v2 = _safe_extract_to_real_num(c2a, c2b, c2c)
-    
-    # Kiểm tra hợp lệ: cạnh > 0 và 0 < góc < 180
-    is_valid = all([
-        v1 is not None and v1 > 0,
-        v2 is not None and v2 > 0,
-        angle is not None and 0 < angle < 180
-    ])
-    
-    # Trả về v1, v2 kiểu float (không cần f-string nữa)
-    return v1, v2, not is_valid
 
 
 

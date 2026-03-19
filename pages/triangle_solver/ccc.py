@@ -1,4 +1,4 @@
-from dash import html, dcc, Input, Output, State, callback
+from dash import html, dcc, Input, Output, State, callback, clientside_callback, ClientsideFunction
 import dash_bootstrap_components as dbc
 from __hidden.__solve import _solve_ccc_common
 from __hidden.__draw import _draw_default
@@ -37,38 +37,43 @@ layout = html.Div([
         ),
 
         dbc.Row([
-            dbc.Col(html.Div(id="o1"), width=12, lg=4),
-            dbc.Col(dcc.Graph(id="output1", figure=_draw_default()), width=12, lg=8)
+            dbc.Col(html.Div(id="o_ccc"), width=12, lg=4),
+            dbc.Col(
+            # Spinner cho đồ thị tam giác
+            dbc.Spinner(
+                dcc.Graph(id="output_ccc", figure=_draw_default()),
+                color="success", 
+                type="border",
+                delay_show=200
+            ), 
+        width=12, lg=8
+    ) 
         ], className="mt-4")
     ], fluid=True)
 ], id="ccc", className="p-3")
 
 
 
-@callback(
+clientside_callback(
+    ClientsideFunction(
+        namespace='clientside',
+        function_name='check_ccc'
+    ),
     [
         Output("c1", "value"), Output("c2", "value"), Output("c3", "value"),
         Output("btn", "disabled")
-    ], 
+    ],
     [
         Input("c1_a", "value"), Input("c1_b", "value"), Input("c1_c", "value"),
         Input("c2_a", "value"), Input("c2_b", "value"), Input("c2_c", "value"),
         Input("c3_a", "value"), Input("c3_b", "value"), Input("c3_c", "value"),
     ]
 )
-def update_real_values(*vals):
-    v1 = _safe_extract_to_real_num(vals[0], vals[1], vals[2])
-    v2 = _safe_extract_to_real_num(vals[3], vals[4], vals[5])
-    v3 = _safe_extract_to_real_num(vals[6], vals[7], vals[8])
-    
-    is_ready = all(v > 0 for v in [v1, v2, v3] if v is not None)
-    
-    return v1, v2, v3, not is_ready
 
 
 
 @callback(
-    [Output("o1", "children"), Output("output1", "figure")],
+    [Output("o_ccc", "children"), Output("output_ccc", "figure")],
     Input("btn", "n_clicks"),
     [
         State("c1", "value"), 

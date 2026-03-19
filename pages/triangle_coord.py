@@ -86,6 +86,7 @@ layout = html.Div([
     State("x1", "value"), State("y1", "value"),
     State("x2", "value"), State("y2", "value"),
     State("x3", "value"), State("y3", "value"),
+    prevent_initial_call=True
 )
 def calculate_triangle(n_clicks, x1, y1, x2, y2, x3, y3):
     if any(v is None for v in [x1, y1, x2, y2, x3, y3]):

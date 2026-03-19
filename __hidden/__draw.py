@@ -145,49 +145,47 @@ def _draw_triangle(x1, y1, x2, y2, x3, y3):
         marker=dict(size=10),
         legendgroup="median",
         name="Trọng tâm",
+        text=["G"],
         visible="legendonly"
     ))
 
 
     # =================================
-    # 3 ALTITUDE (BẢN LOGIC TUYỆT ĐỐI)
+    # 3 ALTITUDE
     # =================================
     for i, (v, f, side_start) in enumerate([
         (A, orthocenter["feet"]["A_feet"], B), 
         (B, orthocenter["feet"]["B_feet"], A), 
         (C, orthocenter["feet"]["C_feet"], B)
     ]):
-        # 1. Vẽ đường cao chính (v -> f -> H)
         fig.add_trace(go.Scatter(
             x=[v.x, f.x, H.x], y=[v.y, f.y, H.y],
             mode="lines",
             line=dict(dash="dot", color="#f472b6", width=1),
             legendgroup="altitude", 
-            name="Trực tâm (H)", # Tên chung cho cả group
-            showlegend=False,    # Không hiện dòng riêng cho từng đường cao
+            name="Trực tâm (H)",
+            showlegend=False,
             visible="legendonly"
         ))
 
-        # 2. Vẽ đường kéo dài (Chỉ hiện khi f != v)
         if f != v:
             fig.add_trace(go.Scatter(
                 x=[side_start.x, f.x], y=[side_start.y, f.y],
                 mode="lines",
                 line=dict(dash="longdash", color="rgba(244, 114, 182, 0.2)"),
                 legendgroup="altitude",
-                showlegend=False, # Không hiện dòng riêng cho đường kéo dài
+                showlegend=False,
                 visible="legendonly"
             ))
 
-    # 3. ĐIỂM TRỰC TÂM H - ĐẠI DIỆN DUY NHẤT TRÊN LEGEND
     fig.add_trace(go.Scatter(
         x=[H.x], y=[H.y],
         mode="markers+text",
         text=["H"], textposition="bottom right",
         marker=dict(size=12, color="#f472b6", symbol="circle"),
         legendgroup="altitude", 
-        name="Trực tâm", # ĐÂY LÀ DÒNG DUY NHẤT HIỆN TRÊN BẢNG CHÚ GIẢI
-        showlegend=True,     # Cho phép dòng này xuất hiện
+        name="Trực tâm",
+        showlegend=True, 
         visible="legendonly"
     ))
 
@@ -221,6 +219,7 @@ def _draw_triangle(x1, y1, x2, y2, x3, y3):
         mode="markers",
         legendgroup="bisector",
         name="Tâm nội tiếp",
+        text=["I"],
         visible="legendonly"
     ))
 
@@ -250,6 +249,7 @@ def _draw_triangle(x1, y1, x2, y2, x3, y3):
         mode="markers",
         legendgroup="perp",
         name="Tâm ngoại tiếp",
+        text=["O"],
         visible="legendonly"
     ))
 
@@ -298,61 +298,89 @@ def _draw_triangle(x1, y1, x2, y2, x3, y3):
             ))
 
 
+
     # =================================
-    # 7 AUTO SCALE (ỔN ĐỊNH HƠN)
+    # 7 AUTO SCALE (PHIÊN BẢN ƯU TIÊN ĐƯỜNG TRÒN)
     # =================================
 
-    pts=[A,B,C,O,I,G,H]
+    # 1. Nhóm các điểm chính (Đỉnh tam giác)
+    core_pts = [A, B, C]
+    c_xs = [p.x for p in core_pts]
+    c_ys = [p.y for p in core_pts]
+    
+    # 2. Tính toán biên độ của tam giác
+    tri_w = max(c_xs) - min(c_xs)
+    tri_h = max(c_ys) - min(c_ys)
+    tri_size = max(tri_w, tri_h)
 
-    xs=[p.x for p in pts]
-    ys=[p.y for p in pts]
+    # 3. Tính toán vùng bao phủ mong muốn (Bao gồm cả đường tròn ngoại tiếp)
+    # Ta lấy tâm O và cộng thêm bán kính R để đảm bảo đường tròn không bị cắt
+    # circum["radius"] là R, O là tâm
+    R = circum["radius"]
+    all_visible_xs = c_xs + [O.x - R, O.x + R, I.x, G.x, H.x]
+    all_visible_ys = c_ys + [O.y - R, O.y + R, I.y, G.y, H.y]
 
-    minx,maxx=min(xs),max(xs)
-    miny,maxy=min(ys),max(ys)
+    # 4. CHỐNG "CHOÁNG": Giới hạn độ giãn nở
+    # Nếu đường tròn quá lớn (vượt quá 3 lần tam giác), ta sẽ cap lại để tam giác không quá bé
+    limit_factor = 3.0 
+    max_allowed_size = tri_size * limit_factor
 
-    size = max(maxx-minx, maxy-miny) * 0.7
+    minx, maxx = min(all_visible_xs), max(all_visible_xs)
+    miny, maxy = min(all_visible_ys), max(all_visible_ys)
 
-    cx=(minx+maxx)/2
-    cy=(miny+maxy)/2
+    # Tính toán Center và Size tạm thời
+    temp_cx = (minx + maxx) / 2
+    temp_cy = (miny + maxy) / 2
+    temp_size = max(maxx - minx, maxy - miny) / 2
 
+    # Áp dụng giới hạn
+    final_size = min(temp_size, max_allowed_size / 2)
+    # Nếu bị giới hạn, ta ưu tiên tập trung vào tâm của tam giác thay vì tâm của đường tròn khổng lồ
+    if temp_size > final_size:
+        cx = sum(c_xs) / 3
+        cy = sum(c_ys) / 3
+    else:
+        cx, cy = temp_cx, temp_cy
+
+    # Thêm chút padding cho thoáng
+    final_size *= 1.1 
+
+    # 5. Tính toán bước chia lưới (dtick) đồng nhất
+    if final_size > 0:
+        exponent = np.floor(np.log10(final_size))
+        base = 10 ** exponent
+        if final_size / base < 2: step = base / 2
+        elif final_size / base < 5: step = base
+        else: step = base * 2
+    else:
+        step = 1
 
     fig.update_layout(
-
         xaxis=dict(
-            range=[cx-size,cx+size],
-            scaleanchor="y",
-            showgrid=True,
-            gridcolor='rgba(255, 255, 255, 0.03)', # Đường lưới siêu mờ
-            zerolinecolor='rgba(255, 255, 255, 0.1)', # Trục 0 mờ
-            tickfont=dict(color="#94a3b8") # Màu muted text cho tọa độ
-        ),
-
-        yaxis=dict(
-            range=[cy-size,cy+size],
-            showgrid=True,
+            range=[cx - final_size, cx + final_size],
+            dtick=step,
+            tick0=0,
             gridcolor='rgba(255, 255, 255, 0.03)',
             zerolinecolor='rgba(255, 255, 255, 0.1)',
-            tickfont=dict(color="#94a3b8")
+            scaleanchor="y",
+            scaleratio=1,
+            constrain="domain",
         ),
-
-        height=600,
-        margin=dict(l=20, r=20, t=40, b=20), # Giảm margin cho gọn
-
-        legend=dict(
-            orientation="h",
-            y=-0.1,
-            x=0.5,
-            xanchor="center",
-            bgcolor="rgba(0,0,0,0)", # Legend trong suốt
-            bordercolor="rgba(255,255,255,0.05)", # Viền mờ
-            font=dict(color="#e2e4e9") # Màu text chính
+        yaxis=dict(
+            range=[cy - final_size, cy + final_size],
+            dtick=step,
+            tick0=0,
+            gridcolor='rgba(255, 255, 255, 0.03)',
+            zerolinecolor='rgba(255, 255, 255, 0.1)',
+            constrain="domain",
         ),
-
-        template="plotly_dark", # Sử dụng theme tối mặc định của Plotly
-        paper_bgcolor='rgba(0,0,0,0)', # Nền trong suốt để lộ nền web `#0f111a`
-        plot_bgcolor='rgba(0,0,0,0)',  # Nền vùng vẽ trong suốt
-
-        dragmode="pan", # Mặc định là chế độ kéo (Pan) cho dễ thao tác
+        width=700,
+        height=700,
+        dragmode="pan",
+        template="plotly_dark",
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        margin=dict(l=40, r=40, t=40, b=40),
     )
 
     return fig

@@ -1,4 +1,4 @@
-from dash import html, dcc, Input, Output, State, callback
+from dash import html, dcc, Input, Output, State, callback, clientside_callback, ClientsideFunction
 import dash_bootstrap_components as dbc
 import math
 from __hidden.__solve import _solve_ccc_common
@@ -62,29 +62,34 @@ layout = html.Div([
 
     dbc.Row([
         dbc.Col(html.Div(id="o_gcg"), width=12, lg=4),
-        dbc.Col(dcc.Graph(id="output_gcg", figure=_draw_default()), width=12, lg=8)
+        dbc.Col(
+            dbc.Spinner(
+                dcc.Graph(id="output_gcg", figure=_draw_default()),
+                color="success", 
+                type="border",   
+                delay_show=200 
+            ), 
+            width=12, lg=8
+        )
     ], className="mt-4")
 ], id="gcg", className="p-3")
 
 
 
-@callback(
-    [Output("gcg_c_val", "value"), Output("btn_gcg", "disabled")],
+clientside_callback(
+    ClientsideFunction(
+        namespace='clientside',
+        function_name='check_gcg'
+    ),
+    [
+        Output("gcg_c_val", "value"), 
+        Output("btn_gcg", "disabled")
+    ],
     [
         Input("gcg_c_a", "value"), Input("gcg_c_b", "value"), Input("gcg_c_c", "value"),
         Input("gcg_angle1", "value"), Input("gcg_angle2", "value")
     ]
 )
-def update_gcg_real_time(a, b, c, g1, g2):
-    val_c = _safe_extract_to_real_num(a, b, c)
-    
-    is_valid = all([
-        val_c is not None and val_c > 0,
-        g1 is not None and g2 is not None,
-        g1 and g2 and (g1 + g2) < 180
-    ])
-    
-    return val_c, not is_valid
 
 
 
